@@ -1,0 +1,12 @@
+{% extends 'account/base.html' %}
+
+{% block head_title %}{{bulletin.title_bul}}{% endblock head_title %}
+
+
+{% block content %}
+<h1>Объявление</h1>
+<h2>{{bulletin.title_bul}}</h2>
+<p>{{bulletin.date_bul|date:'d.m.Y (h:m)' }}</p>
+<p>{{bulletin.body_bul|safe}}</p>
+<p align="right">Автор: {{bulletin.author_bul}}</p>
+{% endblock content %}

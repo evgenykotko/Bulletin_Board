@@ -1,0 +1,21 @@
+{% extends 'account/base.html' %}
+
+
+{% block title %} {{ flatpage.title }} {% endblock title %}
+
+
+
+{% block content %}
+<form method="POST">
+    {% csrf_token %}
+    <table>
+        <tr><td>{{form.title_bul.label_tag}}</td><td>{{form.title_bul}}</td></tr>
+        <tr><td>{{form.body_bul.label_tag}}</td> <td>{{form.body_bul}}</td></tr>
+        <tr><td>{{form.author_bul.label_tag}}</td><td>{{form.author_bul}}</td></tr>
+        <tr><td>{{form.guild_bul.label_tag}}</td><td>{{form.guild_bul}}</td></tr>
+    </table>
+    <hr>
+    <input type="submit" value="Добавить/Изменить объявление">
+    <hr>
+</form>
+{% endblock content %}
