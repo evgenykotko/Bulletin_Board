@@ -23,8 +23,14 @@ class Bulletin(models.Model):
     def get_absolute_url(self):
         return reverse('bulletin_detail', kwargs={'pk': self.pk})
 
-class Replay(models.Model):
+class Reply(models.Model):
     date_rep = models.DateTimeField(auto_now_add=True)
     text_rep = models.TextField()
     user_rep = models.ForeignKey(User, on_delete=models.CASCADE)
-    bulletin = models.ForeignKey(Bulletin, on_delete=models.CASCADE)
+    bulletin = models.ForeignKey(Bulletin, on_delete=models.CASCADE, related_name='replies')
+    confirmation = models.BooleanField(default=False)
+
+    def confirm(self):
+        self.confirmation = True
+        self.save()
+

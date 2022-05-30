@@ -1,0 +1,33 @@
+{% extends 'account/base.html' %}
+
+{% block head_title %}Все объявления{% endblock head_title %}
+
+{% block content %}
+<h1>Все отзывы</h1>
+{% if replies %}
+<div>
+<table>
+    {% for reply in replies %}
+    <tr>
+        <td>{{reply.id}}</td>
+        <td>{{ reply.confirmation }}</td>
+        <td>{{reply.date_rep|date:'d.m.Y'}}</td>
+        <td>{{reply.bulletin}}</a></h1></td>
+        <td>{{reply.text_rep }}</td>
+        <td align="center">{{reply.user_rep}}</td>
+
+        <td>
+            <form action="{% url 'replies_delete' reply.id %}">
+                {% csrf_token %}
+                <input type="submit" value="Удалить">
+            </form>
+        </td>
+        <td><a href="{% url 'confirm' reply.pk%}">Подтвердить</a></td>
+    </tr>
+    {% endfor %}
+</table>
+</div>
+{% else %}
+<h2>No replies</h2>
+{% endif %}
+{% endblock content %}

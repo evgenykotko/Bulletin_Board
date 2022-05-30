@@ -4,9 +4,25 @@
 
 
 {% block content %}
-<h1>Объявление</h1>
-<h2>{{bulletin.title_bul}}</h2>
+<h1>{{bulletin.title_bul}}</h1>
 <p>{{bulletin.date_bul|date:'d.m.Y (h:m)' }}</p>
 <p>{{bulletin.body_bul|safe}}</p>
 <p align="right">Автор: {{bulletin.author_bul}}</p>
+<hr>
+{% for reply in list_reps %}
+<p>{{ reply.user_rep__username }} - {{ reply.text_rep }}</p>
+{% endfor %}
+<hr>
+
+<form action="{% url 'bulletin_detail' bulletin.pk %}" method="POST">
+    {% csrf_token %}
+    <table>
+        <tr><td>{{reply_form.text_rep.label_tag}}</td><td>{{reply_form.text_rep}}</td><td><button type="submit">Добавить</button></td></tr>
+    </table>
+</form>
+<hr>
+<table>
+    <tr><td><a href="{% url 'bulletin_update' bulletin.id %}">Редактировать объявление</a></td></tr>
+    <tr><td><a href="{% url 'bulletin_delete' bulletin.id %}">Удалить объявление</a></td></tr>
+</table>
 {% endblock content %}

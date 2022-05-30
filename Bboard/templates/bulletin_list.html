@@ -10,7 +10,7 @@
 <div>
 <table>
     {% for bulletin in bulletins %}
-    <tr><td><a href="{{bulletin.get_absolute_url}}">{{bulletin.title_bul}}</a></td></tr>
+    <tr><td><h1><a href="{{bulletin.get_absolute_url}}">{{bulletin.title_bul}}</a></h1></td></tr>
     <tr><td>{{bulletin.date_bul|date:'d.m.Y'}}</td></tr>
     <tr><td>{{bulletin.body_bul|safe}}</td></tr>
     <tr><td align="right">{{bulletin.author_bul}}</td></tr>

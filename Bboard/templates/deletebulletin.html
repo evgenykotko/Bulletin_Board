@@ -1,0 +1,18 @@
+{% extends 'account/base.html' %}
+<!-- Блок заголовка -->
+{% block title %}
+{{bulletin.title_bul}}
+{% endblock title %}
+
+<!-- Блок контента -->
+{% block content %}
+<h2>Вы действительно хотите удалить новость?</h2>
+<h1>{{bulletin.title_bul}}</h1>
+<p>{{bulletin.date_bul|date:'d M Y (h:m)' }}</p>
+<p>{{bulletin.body_bul|safe}}</p>
+
+<form method="POST">
+    {% csrf_token %}
+    <input type="submit" value="Подтвердить удаление">
+</form>
+{% endblock content %}

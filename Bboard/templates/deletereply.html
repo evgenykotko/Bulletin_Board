@@ -1,0 +1,18 @@
+{% extends 'account/base.html' %}
+<!-- Блок заголовка -->
+{% block title %}
+Отзывы
+{% endblock title %}
+
+<!-- Блок контента -->
+{% block content %}
+<h2>Вы действительно хотите удалить отзыв?</h2>
+<h1>{{replies.text_rep}}</h1>
+<p>{{replies.date_rep|date:'d M Y (h:m)' }}</p>
+<p>{{replies.user_rep}}</p>
+
+<form method="POST">
+    {% csrf_token %}
+    <input type="submit" value="Подтвердить удаление">
+</form>
+{% endblock content %}

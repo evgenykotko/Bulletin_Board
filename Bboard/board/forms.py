@@ -1,5 +1,5 @@
 from django.forms import ModelForm
-from .models import Bulletin
+from .models import Bulletin, Reply
 from django_summernote.widgets import SummernoteWidget, SummernoteInplaceWidget
 
 
@@ -11,3 +11,9 @@ class AddBulletinForm(ModelForm):
             'body_bul': SummernoteWidget(),
             # 'body_bul': SummernoteInplaceWidget(),
         }
+
+class AddReplyBulletinForm(ModelForm):
+    class Meta:
+        model = Reply
+        fields = ['text_rep']
+
