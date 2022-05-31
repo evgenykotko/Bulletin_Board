@@ -34,3 +34,9 @@ class Reply(models.Model):
         self.confirmation = True
         self.save()
 
+class News(models.Model):
+    date_news = models.DateTimeField(auto_now_add=True)
+    title_news = models.TextField()
+    body_news = models.TextField()
+    def __str__(self):
+        return f'{self.title_news}'

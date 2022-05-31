@@ -14,11 +14,10 @@
 <table>
     {% for reply in replies %}
     <tr>
-        <td>{{ reply.confirmation }}</td>
+        <td>{{ reply.pk }}</td>
         <td>{{ reply.date_rep|date:'d.m.Y' }}</td>
         <td>{{ reply.bulletin|truncatewords:3 }}</a></td>
         <td>{{ reply.text_rep }}</td>
-        <td>{{ reply.user_rep }}</td>
         <td><a href="{% url 'replies_delete' reply.id %}">Удалить</a></td>
         <td><a href="{% url 'confirm' reply.id %}">Подтвердить</a></td>
     </tr>

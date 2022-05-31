@@ -14,16 +14,7 @@ class RepliesFilter(FilterSet):
         lookup_expr='icontains',
         label='Объявление'
     )
-    confirmation = django_filters.BooleanFilter(
-        field_name='confirmation',
-        label='Статус отзыва'
-    )
-    user_rep = django_filters.CharFilter(
-        field_name='user_rep__username',
-        lookup_expr='icontains',
-        label='Пользователь'
-    )
 
     class Meta:
         model = Reply
-        fields = ('bulletin', 'text_rep', 'confirmation', 'user_rep')
+        fields = ('bulletin', 'text_rep')

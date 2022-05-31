@@ -1,11 +1,15 @@
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import Group
+
 from django.views.generic import TemplateView, ListView, DetailView, CreateView, UpdateView, DeleteView
-from .models import Bulletin, Author, Reply
+from .models import Bulletin, Author, Reply, Guild
 from django.contrib.auth.models import User
 from .filters import RepliesFilter
 
 from .forms import AddBulletinForm, AddReplyBulletinForm
 from django.shortcuts import render, redirect
+from django.core.mail import send_mail
+from django.db.models.signals import post_save
 
 
 # Create your views here.
@@ -20,6 +24,11 @@ class BulletinListView(ListView):
     template_name = 'bulletin_list.html'
     context_object_name = 'bulletins'
     ordering = ['-id']
+    def get_context_data(self, *args, **kwargs):
+        return {
+            **super().get_context_data(*args, **kwargs),
+            'is_not_author': not self.request.user.groups.filter(name='author').exists(),
+        }
 
 
 class BulletinView(DetailView):
@@ -51,12 +60,21 @@ class BulletinView(DetailView):
             add_rep.bulletin = bulletin
             add_rep.user_rep = self.request.user
             add_rep.save()
+            # Отправляем письмо автору объявления
+            send_mail(
+                subject=f'Объявлению {add_rep.bulletin} добавлен новый отклик',
+                message=f'Пользователь {add_rep.user_rep} добавил отклик к объявлению {add_rep.bulletin}',
+                from_email='bulletin.board.test@yandex.ru',
+                recipient_list=[bulletin.author_bul.user.email]
+            )
         return redirect(bulletin.get_absolute_url())
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 
 
 
-class AddBulletin(CreateView):
-    # permission_required = ('newsportal.add_post')
+class AddBulletin(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+    login_url = '/accounts/login/'
+    permission_required = ('board.add_bulletin')
     template_name = 'add_bulletin.html'
     form_class = AddBulletinForm
 
@@ -69,9 +87,9 @@ class AddBulletin(CreateView):
         return redirect(form.instance.get_absolute_url())
 
 
-class UpdateBulletin(UpdateView):
-    # login_url = '/accounts/login/'
-    # permission_required = ('newsportal.change_post')
+class UpdateBulletin(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+    login_url = '/accounts/login/'
+    permission_required = ('board.change_bulletin')
     template_name = 'add_bulletin.html'
     form_class = AddBulletinForm
 
@@ -80,15 +98,17 @@ class UpdateBulletin(UpdateView):
         return Bulletin.objects.get(pk=id)
 
 #
-class DeleteBulletin(DeleteView):
-    # login_url = '/accounts/login/'
-    # permission_required = ('newsportal.delete_post')
+class DeleteBulletin(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+    login_url = '/accounts/login/'
+    permission_required = ('board.delete_bulletin')
     template_name = 'deletebulletin.html'
     context_object_name = 'bulletin'
     queryset = Bulletin.objects.all()
     success_url = '/board'
 
-class SearchReplies(ListView):
+class SearchReplies(LoginRequiredMixin, PermissionRequiredMixin, ListView):
+    login_url = '/accounts/login/'
+    permission_required = ('board.view_reply')
     model = Reply
     template_name = 'replies_list.html'
     context_object_name = 'replies'
@@ -98,23 +118,20 @@ class SearchReplies(ListView):
         return RepliesFilter(self.request.GET, queryset=super().get_queryset())
 
     def get_queryset(self):
-        return self.get_filter().qs
+        user = self.request.user
+        author_r = Author.objects.get(user=user)
+        return Reply.objects.filter(bulletin__author_bul=author_r)
 
     def get_context_data(self, *args, **kwargs):
-        # получение ID объявления
-        id = self.kwargs.get('pk')
-        # получение и добавление списка отзывов в контекст
-        repl = Reply.objects.filter(bulletin__pk=id).values('text_rep', 'user_rep__username')
         return {
             **super().get_context_data(*args, **kwargs),
-            'list_reps': repl,
             'filter': self.get_filter(),
         }
 
 
-class DeleteReply(DeleteView):
-    # login_url = '/accounts/login/'
-    # permission_required = ('newsportal.delete_post')
+class DeleteReply(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+    login_url = '/accounts/login/'
+    permission_required = ('board.delete_reply')
     template_name = 'deletereply.html'
     context_object_name = 'replies'
     queryset = Reply.objects.all()
@@ -124,4 +141,21 @@ class DeleteReply(DeleteView):
 def confirm_rep(request, pk):
     repl = Reply.objects.get(pk=pk)
     repl.confirm()
+    send_mail(
+        subject=f'Ваш отклик к объявлению {repl.bulletin} подтвержден',
+        message=f'Пользователь {repl.bulletin.author_bul} подтвердил ваш отклик к объявлению {repl.bulletin}',
+        from_email='bulletin.board.test@yandex.ru',
+        recipient_list=[repl.bulletin.author_bul.user.email]
+    )
     return redirect('/board/replies')
+
+@login_required
+def up_to_author(request):
+    user = request.user
+    author_group = Group.objects.get(name='author')
+    if not request.user.groups.filter(name='author').exists():
+        author_group.user_set.add(user)
+        Author.objects.create(user=user)
+    return redirect('/board')
+
+

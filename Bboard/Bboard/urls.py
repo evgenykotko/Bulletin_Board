@@ -15,12 +15,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from board.views import IndexView
+from board.views import BulletinListView
 from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path('', IndexView.as_view()),
+    path('', BulletinListView.as_view()),
     path('admin/', admin.site.urls),
     path('pages/', include('django.contrib.flatpages.urls')),
     path('board/', include('board.urls')),

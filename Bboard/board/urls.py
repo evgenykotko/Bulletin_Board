@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import BulletinListView, BulletinView, AddBulletin, UpdateBulletin, DeleteBulletin, SearchReplies,\
-    DeleteReply, confirm_rep
+    DeleteReply, confirm_rep, up_to_author
 
 
 urlpatterns = [
@@ -12,10 +12,10 @@ urlpatterns = [
     path('replies/', SearchReplies.as_view(), name='replies_search'),
     path('replies/<int:pk>', DeleteReply.as_view(), name='replies_delete'),
     path('replies/<int:pk>/confirmation/', confirm_rep, name='confirm'),
-
+    path('up_to_author/', up_to_author, name='up_to_author'),
     # path('search/', NewsSearch.as_view(), name='news_search'),
     # path('addnews/<int:pk>/', UpdateNews.as_view(), name='news_update'),
     # path('delete/<int:pk>', DeleteNews.as_view(), name='news_delete'),
-    # path('upgrade/', upgrade_me, name='upgrade'),
+    # path('up_to_author/', up_to_author, name='up_to_author'),
     # path('<int:pk>/subscribe/', subscribe, name='subscribe'),
 ]

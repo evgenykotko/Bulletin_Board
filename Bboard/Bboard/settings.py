@@ -45,13 +45,14 @@ INSTALLED_APPS = [
 
     'django_summernote',
 
-    'board',
+    #'board',
+    'board.apps.BoardConfig',
 
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
-    # ... include the providers you want to enable:
-    'allauth.socialaccount.providers.google',
+    # # ... include the providers you want to enable:
+    # 'allauth.socialaccount.providers.google',
 ]
 
 MIDDLEWARE = [
@@ -94,12 +95,17 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 LOGIN_URL = '/accounts/login/'
+LOGIN_REDIRECT_URL = '/board'
 
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
-ACCOUNT_EMAIL_VERIFICATION = 'none'
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+
+
+ACCOUNT_FORMS = {'signup': 'board.forms.CommonSignupForm'}
+
 
 WSGI_APPLICATION = 'Bboard.wsgi.application'
 
@@ -165,3 +171,12 @@ SITE_ID = 1
 STATIC_ROOT = os.path.join(BASE_DIR, 'statics')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+
+# Почта
+EMAIL_HOST = 'smtp.yandex.ru'  # адрес сервера Яндекс-почты для всех один и тот же
+EMAIL_PORT = 465  # порт smtp сервера тоже одинаковый
+EMAIL_HOST_USER = 'bulletin.board.test'  # ваше имя пользователя
+EMAIL_HOST_PASSWORD = 'tzkldnuoetuevoma'  # пароль от почты
+EMAIL_USE_SSL = True  # Яндекс использует ssl, включать его здесь обязательно
+
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER+'@yandex.ru'

@@ -13,7 +13,7 @@
 <p>{{ reply.user_rep__username }} - {{ reply.text_rep }}</p>
 {% endfor %}
 <hr>
-
+ {% if user.is_authenticated %}
 <form action="{% url 'bulletin_detail' bulletin.pk %}" method="POST">
     {% csrf_token %}
     <table>
@@ -25,4 +25,5 @@
     <tr><td><a href="{% url 'bulletin_update' bulletin.id %}">Редактировать объявление</a></td></tr>
     <tr><td><a href="{% url 'bulletin_delete' bulletin.id %}">Удалить объявление</a></td></tr>
 </table>
+{% endif %}
 {% endblock content %}
