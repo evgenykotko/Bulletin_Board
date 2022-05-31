@@ -2,6 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.generic import TemplateView, ListView, DetailView, CreateView, UpdateView, DeleteView
 from .models import Bulletin, Author, Reply
 from django.contrib.auth.models import User
+from .filters import RepliesFilter
 
 from .forms import AddBulletinForm, AddReplyBulletinForm
 from django.shortcuts import render, redirect
@@ -92,6 +93,13 @@ class SearchReplies(ListView):
     template_name = 'replies_list.html'
     context_object_name = 'replies'
     ordering = ['-id']
+
+    def get_filter(self):
+        return RepliesFilter(self.request.GET, queryset=super().get_queryset())
+
+    def get_queryset(self):
+        return self.get_filter().qs
+
     def get_context_data(self, *args, **kwargs):
         # получение ID объявления
         id = self.kwargs.get('pk')
@@ -100,6 +108,7 @@ class SearchReplies(ListView):
         return {
             **super().get_context_data(*args, **kwargs),
             'list_reps': repl,
+            'filter': self.get_filter(),
         }
 
 
