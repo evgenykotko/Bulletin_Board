@@ -17,7 +17,7 @@
 <form action="{% url 'bulletin_detail' bulletin.pk %}" method="POST">
     {% csrf_token %}
     <table>
-        <tr><td>{{reply_form.text_rep.label_tag}}</td><td>{{reply_form.text_rep}}</td><td><button type="submit">Добавить</button></td></tr>
+        <tr><td>Текст отклика</td><td>{{reply_form.text_rep}}</td><td><button type="submit">Добавить</button></td></tr>
     </table>
 </form>
 <hr>

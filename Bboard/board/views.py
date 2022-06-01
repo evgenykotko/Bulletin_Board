@@ -28,6 +28,7 @@ class BulletinListView(ListView):
         return {
             **super().get_context_data(*args, **kwargs),
             'is_not_author': not self.request.user.groups.filter(name='author').exists(),
+            'is_author': self.request.user.groups.filter(name='author').exists(),
         }
 
 
